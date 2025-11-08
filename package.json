@@ -1,0 +1,26 @@
+{
+  "name": "tapped-monorepo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.9.2",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "dev": "yarn workspace star-wars-example dev",
+    "build": "yarn workspaces foreach -Apt run build",
+    "type-check": "yarn workspaces foreach -Apt run type-check"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": false,
+    "trailingComma": "all"
+  }
+}

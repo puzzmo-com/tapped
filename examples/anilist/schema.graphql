@@ -1,0 +1,79 @@
+schema {
+  query: Query
+}
+
+type Query {
+  Page(page: Int, perPage: Int): Page
+  Media(id: Int, type: MediaType, sort: [MediaSort]): Media
+}
+
+type Page {
+  pageInfo: PageInfo
+  media(type: MediaType, sort: [MediaSort]): [Media]
+}
+
+type PageInfo {
+  total: Int
+  currentPage: Int
+  lastPage: Int
+  hasNextPage: Boolean
+  perPage: Int
+}
+
+type Media {
+  id: ID!
+  title: MediaTitle
+  coverImage: MediaCoverImage
+  averageScore: Int
+  genres: [String]
+  description: String
+  episodes: Int
+  status: MediaStatus
+  season: MediaSeason
+  seasonYear: Int
+}
+
+type MediaTitle {
+  romaji: String
+  english: String
+  native: String
+}
+
+type MediaCoverImage {
+  large: String
+  medium: String
+  color: String
+}
+
+enum MediaType {
+  ANIME
+  MANGA
+}
+
+enum MediaStatus {
+  FINISHED
+  RELEASING
+  NOT_YET_RELEASED
+  CANCELLED
+  HIATUS
+}
+
+enum MediaSeason {
+  WINTER
+  SPRING
+  SUMMER
+  FALL
+}
+
+enum MediaSort {
+  POPULARITY_DESC
+  SCORE_DESC
+  TRENDING_DESC
+  FAVOURITES_DESC
+  ID
+  ID_DESC
+  TITLE_ROMAJI
+  TITLE_ROMAJI_DESC
+  TITLE_ENGLISH
+  TITLE_ENGLISH_DESC
+}
