@@ -26,7 +26,7 @@ export const App: React.FC<AppProps> = ({ environment, helmetContext, ssrPath, l
           <Router ssrPath={ssrPath}>
             <div className="app">
               <nav className="nav">
-                <h1>Star Wars Films</h1>
+                <h1>Anime</h1>
               </nav>
               <main className="main">
                 <Suspense fallback={<div className="loading">Loading...</div>}>

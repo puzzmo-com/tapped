@@ -5,7 +5,7 @@ A server-side rendering (SSR) framework for React applications built on Fastify,
 ## Monorepo Structure
 
 - `packages/tapped` - The core tapped framework
-- `examples/star-wars` - Example SSR app using the Star Wars GraphQL API
+- `examples/anilist` - Example SSR app using the Anilist.co GraphQL API
 
 ## Getting Started
 
