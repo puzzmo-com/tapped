@@ -30,8 +30,6 @@ const createFetchRequest = (req: FastifyRequest, res: FastifyReply) => {
       }
     }
   }
-  headers.set("authorization", `Bearer ~`)
-  headers.set("auth-provider", "custom")
 
   const init = {
     method: req.method,
@@ -123,7 +121,13 @@ export const renderWouterReactApp = (renderOptions: RenderWouterOptions) => {
   return renderToPipeableStream(
     <React.StrictMode>
       <Suspense fallback={fallback}>
-        <App environment={environment} helmetContext={helmetContext} ssrPath={pathname} loaderData={loaderData} {...appProps} />
+        <App
+          environment={environment}
+          helmetContext={helmetContext}
+          ssrPath={pathname}
+          loaderData={loaderData}
+          {...appProps}
+        />
       </Suspense>
     </React.StrictMode>,
     options,

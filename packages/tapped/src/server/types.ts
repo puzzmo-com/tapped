@@ -23,6 +23,8 @@ export interface ServerConfig {
   isDev: boolean
   abortDelay?: number
   graphQLURL: string
+  /** Optional path to a global CSS file to inject during SSR (e.g., "/src/app/global.css") */
+  globalCSS?: string
 }
 
 export interface CreateContextOptions {

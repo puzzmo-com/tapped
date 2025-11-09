@@ -5,7 +5,6 @@ import { HelmetProvider } from "@dr.pogodin/react-helmet"
 import { WouterLoaderProvider } from "tapped/src/client"
 import { createRouteElements } from "tapped/src/routing"
 import { createWouterRoutes } from "./routes"
-import "./App.css"
 
 const { RelayEnvironmentProvider } = ReactRelay
 type Environment = ReactRelay.Environment

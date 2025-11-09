@@ -21,7 +21,19 @@ export const setupServer = async (options: SetupServerOptions) => {
   const { config, __dirname, serverModulePath = "/src/tappedServerModule.tsx" } = options
   const { isProduction, base } = config
 
-  const templateHtml = isProduction ? await fs.readFile(path.resolve(__dirname, "./dist/client/index.html"), "utf-8") : ""
+  const templateHtml = isProduction
+    ? await fs.readFile(path.resolve(__dirname, "./dist/client/index.html"), "utf-8")
+    : ""
+
+  let manifest: Record<string, any> = {}
+  if (isProduction) {
+    try {
+      const manifestPath = path.resolve(__dirname, "./dist/client/.vite/manifest.json")
+      manifest = JSON.parse(await fs.readFile(manifestPath, "utf-8"))
+    } catch (e) {
+      console.warn("Could not load Vite manifest for production CSS injection")
+    }
+  }
 
   const fastify = Fastify({})
   let vite: ViteDevServer | null = null
@@ -50,7 +62,7 @@ export const setupServer = async (options: SetupServerOptions) => {
     })
   }
 
-  return { fastify, vite, templateHtml, serverModulePath }
+  return { fastify, vite, templateHtml, serverModulePath, manifest }
 }
 
 export interface RegisterSSRHandlerOptions {
@@ -60,14 +72,15 @@ export interface RegisterSSRHandlerOptions {
   serverModulePath: string
   config: ServerConfig
   productionServerModulePath: string
+  manifest?: Record<string, any>
 }
 
 /**
  * Registers the SSR route handler for server-side rendering of React components
  */
 export const registerSSRHandler = (options: RegisterSSRHandlerOptions) => {
-  const { fastify, vite, templateHtml, serverModulePath, config, productionServerModulePath } = options
-  const { isProduction, base, graphQLURL, abortDelay = 10000, isDev } = config
+  const { fastify, vite, templateHtml, serverModulePath, config, productionServerModulePath, manifest = {} } = options
+  const { isProduction, base, graphQLURL, abortDelay = 10000, isDev, globalCSS } = config
 
   fastify.get("*", async (request, reply) => {
     debugLog("Route handler called for:", request.url)
@@ -125,6 +138,23 @@ export const registerSSRHandler = (options: RegisterSSRHandlerOptions) => {
             response.write(helmet.meta.toString())
             response.write(helmet.link.toString())
             response.write(helmet.script.toString())
+          }
+
+          // Inject global CSS if configured
+          if (globalCSS) {
+            if (isDev) {
+              // In dev mode, link directly to the source CSS file (Vite will handle it)
+              response.write(`<link rel="stylesheet" href="${globalCSS}">`)
+            } else {
+              // In production, look up the hashed CSS filename from the manifest
+              const globalCssKey = globalCSS.startsWith("/") ? globalCSS.slice(1) : globalCSS
+              const manifestEntry = manifest[globalCssKey]
+              if (manifestEntry?.css) {
+                for (const cssFile of manifestEntry.css) {
+                  response.write(`<link rel="stylesheet" href="${base}${cssFile}">`)
+                }
+              }
+            }
           }
 
           const { styleXSheet } = context

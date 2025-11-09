@@ -2,7 +2,6 @@ import ReactDOM from "react-dom/client"
 import { RecordSource } from "relay-runtime"
 import { App } from "./app/App"
 import { createEnvironment } from "./environment"
-import "./app/App.css"
 
 declare global {
   interface Window {

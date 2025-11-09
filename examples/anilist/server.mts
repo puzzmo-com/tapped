@@ -13,9 +13,10 @@ const config = {
   abortDelay: 10000,
   graphQLURL: "https://graphql.anilist.co",
   debugLog: (...args: unknown[]) => console.log(...args),
+  globalCSS: "/src/app/global.css",
 }
 
-const { fastify, vite, templateHtml, serverModulePath } = await setupServer({
+const { fastify, vite, templateHtml, serverModulePath, manifest } = await setupServer({
   config,
   __dirname,
 })
@@ -37,6 +38,7 @@ registerSSRHandler({
   productionServerModulePath: pathToFileURL(
     path.resolve(__dirname, "./dist/server/tappedServerModule.mjs")
   ).href,
+  manifest,
 })
 
 startServer(fastify, config.port)
