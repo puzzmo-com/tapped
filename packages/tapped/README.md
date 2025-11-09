@@ -214,30 +214,9 @@ const MyPage = () => {
 - `WouterLoaderProvider` - Context provider for loader data
 - `useSSRData()` - Hook to access SSR loader data from context or `window.__LOADER_DATA`
 
-## Architecture Notes
+## Thanks
 
-### Shared Relay Environment Pattern
-
-**Critical:** All data loaders must use the same Relay environment instance for SSR to work correctly:
-
-1. Create environment once in your `createTappedContext` function
-2. Pass that environment to `createWouterRoutes()` and any root loaders
-3. Pass the environment to `createWouterSSRContext()` via the options
-4. During SSR, all loaders will populate the same store
-5. When React renders, `useLazyLoadQuery` reads from that populated store without suspending
-
-```typescript
-// ✅ Correct - Single environment
-const environment = createEnvironment(url, recordSource, cookie)
-const routes = createWouterRoutes(environment)
-const rootLoader = loadRootQuery(environment)
-return createWouterSSRContext({ ..., environment, routes, rootBootstrappingLoader: rootLoader })
-
-// ❌ Wrong - Multiple environments
-const routes = createWouterRoutes(createEnvironment(...)) // Different env!
-const rootLoader = loadRootQuery(createEnvironment(...))  // Different env!
-return createWouterSSRContext({ ... }) // Creates another env!
-```
+This project builds on my [Relay Vite SSR Example](https://github.com/orta/relay-vite-ssr-example?tab=readme-ov-file#relay-vite-ssr-example) which builds on [Aqora's excellent Implementing Streaming SSR with React Relay and Vite](https://aqora.io/blog/implementing-streaming-ssr-with-react-relay-and-vite-899908).
 
 ## License
 

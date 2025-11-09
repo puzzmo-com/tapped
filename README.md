@@ -27,6 +27,10 @@ yarn dev
 
 Tapped is a little dependency providing infrastructure for building type-safe, server-rendered React applications with GraphQL data fetching. It's based on Wouters routing system (and this demo, and puzzmo.com use StyleX)
 
-The goal here in open sourcing is not to give you a perfect npm dependency but to provide a small chunk of code which you can import into your own codebase and build on top of. You're not going to want everything we want and I'm not really going to be supporting everything you want!
+The goal here in open sourcing is not to give you a npm dependency but to provide a small chunk of code which you can import into your own codebase and build on top of. You're not going to want everything we want and I'm not really going to be supporting everything you want!
 
-See the [tapped package README](packages/tapped/README.md) for detailed documentation.
+So, I recommend copying and pasting the folder `packages/tapped` into your repo (it is MIT licensed as referenced in the package.json) and treat it as your own code once you have it up and running.
+
+You can use the example app in this repo to see how it all comes together (or use it as a working reference with Claude Code etc) and due to the pattern of having it only try SSR when there is a loader present on a route - you can migrate a complex client-side app to incrementally handle SSR route by route. Which is how we're migrating puzzmo.com
+
+For the details, see the [tapped package README](packages/tapped/README.md).
