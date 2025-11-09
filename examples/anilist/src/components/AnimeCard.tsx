@@ -1,4 +1,5 @@
 import * as stylex from "@stylexjs/stylex"
+import { Link } from "wouter"
 import { AnimeListPageQuery$data } from "../queries/__generated__/AnimeListPageQuery.graphql"
 
 interface AnimeCardProps {
@@ -13,14 +14,15 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
   const coverColor = anime.coverImage?.color || "#2c3e50"
 
   return (
-    <div
-      {...stylex.props(s.card)}
-      style={
-        {
-          "--cover-color": coverColor,
-        } as React.CSSProperties
-      }
-    >
+    <Link href={`/anime/${anime.id}`} {...stylex.props(s.link)}>
+      <div
+        {...stylex.props(s.card)}
+        style={
+          {
+            "--cover-color": coverColor,
+          } as React.CSSProperties
+        }
+      >
       {anime.coverImage?.large && (
         <div
           {...stylex.props(s.coverImage)}
@@ -41,10 +43,16 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
         <p {...stylex.props(s.episodes)}>{episodes}</p>
       </div>
     </div>
+    </Link>
   )
 }
 
 const s = stylex.create({
+  link: {
+    textDecoration: "none",
+    color: "inherit",
+    display: "block",
+  },
   card: {
     backgroundColor: "#1a1a1a",
     borderRadius: "8px",

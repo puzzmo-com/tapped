@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import React, { Suspense } from "react"
+import React from "react"
 import { type RenderToPipeableStreamOptions, renderToPipeableStream } from "react-dom/server"
 import { RecordSource } from "relay-runtime"
 
@@ -105,7 +105,6 @@ type RenderWouterOptions = {
   context: WouterContext
   App: React.ComponentType<any>
   appProps?: Record<string, any>
-  fallback?: React.ReactNode
   options: RenderToPipeableStreamOptions
 }
 
@@ -113,22 +112,20 @@ type RenderWouterOptions = {
  * Renders a Wouter application to a pipeable stream for server-side rendering
  */
 export const renderWouterReactApp = (renderOptions: RenderWouterOptions) => {
-  const { context, App, appProps = {}, fallback = <div>Loading...</div>, options } = renderOptions
+  const { context, App, appProps = {}, options } = renderOptions
   const { environment, helmetContext, pathname, loaderData, styleXSheet } = context
 
   styleXSheet.inject()
 
   return renderToPipeableStream(
     <React.StrictMode>
-      <Suspense fallback={fallback}>
-        <App
-          environment={environment}
-          helmetContext={helmetContext}
-          ssrPath={pathname}
-          loaderData={loaderData}
-          {...appProps}
-        />
-      </Suspense>
+      <App
+        environment={environment}
+        helmetContext={helmetContext}
+        ssrPath={pathname}
+        loaderData={loaderData}
+        {...appProps}
+      />
     </React.StrictMode>,
     options,
   )

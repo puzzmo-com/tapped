@@ -1,10 +1,7 @@
-import ReactRelay from "react-relay"
-import { preload } from "tapped/src/relay"
+import { graphql, type Environment } from "react-relay"
+import { preload, useGetMainPageQuery } from "tapped/src/relay"
 
 import type { AnimeListPageQuery as AnimeListPageQueryType } from "./__generated__/AnimeListPageQuery.graphql"
-
-const { graphql } = ReactRelay
-type Environment = ReactRelay.Environment
 
 const Query = graphql`
   query AnimeListPageQuery {
@@ -33,6 +30,5 @@ export const loadAnimeListPageQuery = (environment: Environment) => {
 }
 
 export const useGetAnimeListPageQuery = () => {
-  const data = ReactRelay.useLazyLoadQuery<AnimeListPageQueryType>(Query, {})
-  return data
+  return useGetMainPageQuery<AnimeListPageQueryType>(Query, {})
 }

@@ -121,8 +121,8 @@ export const registerSSRHandler = (options: RegisterSSRHandlerOptions) => {
             reply.send("<h1>Something went wrong: " + error.message + "</h1>")
           }
         },
-        onShellReady() {
-          debugLog("onShellReady called - starting to stream")
+        onAllReady() {
+          debugLog("onAllReady called - starting to stream")
           reply.hijack()
           const response = reply.raw
 
@@ -198,9 +198,6 @@ export const registerSSRHandler = (options: RegisterSSRHandlerOptions) => {
           })
 
           pipe(transformStream)
-        },
-        onAllReady() {
-          debugLog("onAllReady called - all content ready")
         },
         onError(error: any) {
           didError = true

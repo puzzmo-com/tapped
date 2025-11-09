@@ -2,8 +2,8 @@ import { useGetAnimeListPageQuery } from "../queries/AnimeListPageQuery"
 import { AnimeCard } from "../components/AnimeCard"
 
 export const AnimeListPage = () => {
-  const data = useGetAnimeListPageQuery()
-  const animeList = data.Page?.media || []
+  const { query } = useGetAnimeListPageQuery()
+  const animeList = query.Page?.media || []
 
   return (
     <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>

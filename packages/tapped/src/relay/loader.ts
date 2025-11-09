@@ -29,11 +29,15 @@ export const preload = async <TQuery extends OperationType>(
 
 /**
  * Hook to fetch and return GraphQL query data with lazy loading support.
- * Uses preloaded data if available (SSR), otherwise fetches lazily (CSR).
+ * Data will be read from the Relay store if it was preloaded via SSR loader.
  */
-export const useGetMainPageQuery = <TQuery extends OperationType>(querySDL: GraphQLTaggedNode, vars?: TQuery["variables"]) => {
+export const useGetMainPageQuery = <TQuery extends OperationType>(
+  querySDL: GraphQLTaggedNode,
+  vars?: TQuery["variables"],
+) => {
   const variables = vars || ({} as TQuery["variables"])
 
+  // Use store-or-network policy to read from the Relay store if data was preloaded
   const result = useLazyLoadQuery<TQuery>(querySDL, variables, {
     fetchPolicy: "store-or-network",
   })
