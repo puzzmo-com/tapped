@@ -9,7 +9,7 @@
     "examples/*"
   ],
   "scripts": {
-    "dev": "yarn workspace star-wars-example dev",
+    "dev": "yarn workspace anilist-example dev",
     "build": "yarn workspaces foreach -Apt run build",
     "type-check": "yarn workspaces foreach -Apt run type-check"
   },
