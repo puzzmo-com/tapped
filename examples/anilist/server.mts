@@ -1,7 +1,7 @@
 import path from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 
-import { registerSSRHandler, setupServer, startServer } from "tapped/src/server"
+import { registerSSRHandler, setupServer, startServer } from "@puzzmo/tapped/src/server"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -16,7 +16,7 @@ const config = {
   globalCSS: "/src/app/global.css",
 }
 
-const { fastify, vite, templateHtml, serverModulePath, manifest } = await setupServer({
+const { fastify, vite, templateHtml, serverModulePath } = await setupServer({
   config,
   __dirname,
 })
@@ -36,9 +36,8 @@ registerSSRHandler({
   serverModulePath,
   config,
   productionServerModulePath: pathToFileURL(
-    path.resolve(__dirname, "./dist/server/tappedServerModule.mjs")
+    path.resolve(__dirname, "./dist/server/tappedServerModule.js")
   ).href,
-  manifest,
 })
 
 startServer(fastify, config.port)

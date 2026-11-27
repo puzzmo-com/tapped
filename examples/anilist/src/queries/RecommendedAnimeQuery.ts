@@ -1,5 +1,5 @@
 import { graphql } from "react-relay"
-import { useGetMainPageQuery } from "tapped/src/relay"
+import { useGetMainPageQuery } from "@puzzmo/tapped/src/relay"
 
 import type { RecommendedAnimeQuery as RecommendedAnimeQueryType } from "./__generated__/RecommendedAnimeQuery.graphql"
 

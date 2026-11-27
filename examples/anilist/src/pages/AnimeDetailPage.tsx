@@ -79,7 +79,7 @@ export const AnimeDetailPage = () => {
         <h2 {...stylex.props(s.sectionTitle)}>Recommended Anime</h2>
         <div {...stylex.props(s.recommendationsGrid)}>
           {recommendedAnime.map((recommendedItem) => {
-            if (!recommendedItem || recommendedItem.id === id) return null
+            if (!recommendedItem || recommendedItem.id === String(id)) return null
             return <AnimeCard key={recommendedItem.id} anime={recommendedItem} />
           })}
         </div>

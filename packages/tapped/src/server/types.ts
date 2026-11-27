@@ -1,19 +1,69 @@
 import { type FastifyReply, type FastifyRequest } from "fastify"
-import { RecordSource } from "relay-runtime"
+import { OperationType, RecordSource } from "relay-runtime"
 import RelayModernEnvironment from "relay-runtime/lib/store/RelayModernEnvironment"
 
 import { styleSheet } from "@stylexjs/stylex/lib/StyleXSheet"
 
-import { RouteMatch, WouterRoute } from "../routing/types.js"
+import { PreloadedData } from "../relay/types.js"
+import { MiddlewareFn, Placeholder, RouteMatch, WouterRoute } from "../routing/types.js"
 
-export interface WouterContext {
+/** Millisecond durations of the SSR phases, surfaced to the browser as a Server-Timing header. */
+export interface SSRTimings {
+  /** Time spent in the middleware chain. */
+  mw?: number
+  /** Time awaiting route/root loaders. */
+  loader?: number
+  /** Time spent rendering to the stream, once loading finished. */
+  render?: number
+}
+
+/**
+ * How a request's document was produced. The failure modes matter most: `timeout`, `backoff` and `error`
+ * all answer 200 with a client shell, so without this they are indistinguishable from a healthy SPA route.
+ */
+export type SSROutcome = "ssr" | "spa" | "timeout" | "backoff" | "error" | "short-circuit" | "cache-hit" | "aborted"
+
+/** What a finished request reports to `onRequestComplete`. */
+export interface SSRRequestEvent {
+  /** The matched route's path pattern (never the raw URL — that would be unbounded label cardinality). */
+  routePath: string | null
+  outcome: SSROutcome
+  status: number
+  timings: SSRTimings
+  /** Wall-clock milliseconds for the whole handler. */
+  duration: number
+}
+
+export interface WouterContext<TAppConfig = Record<string, unknown>> {
   environment: RelayModernEnvironment
   helmetContext: { helmet?: any }
   recordSource: RecordSource
   routeMatch: RouteMatch | null
-  loaderData: any
+  loaderData: PreloadedData<OperationType> | null
   pathname: string
   styleXSheet: typeof styleSheet
+  appConfig?: TAppConfig
+  /**
+   * Set when the server should skip SSR and serve the client shell: an explicit `render: "spa"` route, a
+   * preload timeout, or `backoff`, which tapped never sets itself: a consumer sets it when it chose not to
+   * render, e.g. while its upstream is overloaded.
+   */
+  csrFallback?: "spa" | "timeout" | "backoff"
+  /** A middleware short-circuit (e.g. a redirect); the server translates it to the HTTP reply verbatim. */
+  shortCircuitResponse?: Response
+  /** Extra response headers from the matched route's `headers()`. */
+  responseHeaders?: Record<string, string>
+  /** Phase durations for the Server-Timing header. */
+  timings?: SSRTimings
+  /** The matched route's `head()` tags, already serialized — written into the head on every render mode. */
+  headHTML?: string
+  /** The matched route's `placeholder()`, for the root element of a client-rendered response. */
+  placeholder?: Placeholder | null
+  /**
+   * Set by the consumer's server module when this render must not be stored in the SSR page cache,
+   * for something only the loaded data can tell — e.g. a page for a tenant that does not exist.
+   */
+  uncacheable?: boolean
 }
 
 export interface ServerConfig {
@@ -23,23 +73,38 @@ export interface ServerConfig {
   isDev: boolean
   abortDelay?: number
   graphQLURL: string
-  /** Optional path to a global CSS file to inject during SSR (e.g., "/src/app/global.css") */
-  globalCSS?: string
 }
 
-export interface CreateContextOptions {
+export interface CreateContextOptions<TAppConfig = Record<string, unknown>> {
   /** Where should we be fetching data from? */
   graphqlURL: string
   /** The incoming request object */
   request: FastifyRequest
-  /** The outgoing reply object for us to handle SSR on*/
+  /** The outgoing reply object for us to handle SSR on */
   reply: FastifyReply
   /** So that the SSR renderer can find the correct route */
   routes: WouterRoute[]
+  /**
+   * An optional URL prefix that route patterns never contain (a locale, a tenant), as an anchored
+   * pattern (e.g. `/^\/[a-z]{2}-[A-Z]{2}(?=\/|$)/`). A pathname carrying it is matched against
+   * `routes` with the prefix removed, mirroring a client router whose location hook strips it before
+   * its own matching. Only matching uses the stripped path: the rendered app, middleware and document
+   * hooks still receive the request's own pathname.
+   */
+  optionalPathPrefix?: RegExp
   /** Adds support for a root request for app bootrstrapping */
-  rootBootstrappingLoader?: (args: { params: {}; request: Request }) => Promise<any>
+  rootBootstrappingLoader?: (args: {
+    params: {}
+    request: Request
+    signal?: AbortSignal
+    context?: Record<string, unknown>
+  }) => Promise<any>
+  /** Server middleware run on every request, before any route middleware and loaders. */
+  middleware?: MiddlewareFn[]
   /** You pass in a relay environment which is used for data fetching */
   environment: RelayModernEnvironment
   /** You pass in a record source which is used and filled up during SSR */
   recordSource?: RecordSource
+  /** App configuration to inject into window.__APP_CONFIG for client hydration */
+  appConfig?: TAppConfig
 }

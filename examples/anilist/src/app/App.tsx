@@ -2,8 +2,8 @@ import React from "react"
 import { Router, Route, Switch } from "wouter"
 import { RelayEnvironmentProvider, type Environment } from "react-relay"
 import { HelmetProvider } from "@dr.pogodin/react-helmet"
-import { WouterLoaderProvider } from "tapped/src/client"
-import { createRouteElements } from "tapped/src/routing"
+import { WouterLoaderProvider } from "@puzzmo/tapped/src/client"
+import { createRouteElements } from "@puzzmo/tapped/src/routing"
 import { createWouterRoutes } from "./routes"
 
 interface AppProps {

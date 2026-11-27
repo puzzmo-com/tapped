@@ -4,8 +4,12 @@ import relay from "vite-plugin-relay"
 import { cjsInterop } from "vite-plugin-cjs-interop"
 import StylexRsPlugin from "@stylexswc/unplugin/vite"
 
+import { tapped } from "@puzzmo/tapped/vite"
+
 export default defineConfig({
   plugins: [
+    // Keeps the SSR-only server module out of the client bundle, and splits pages/queries into their own chunks
+    tapped(),
     react(),
     relay,
     cjsInterop({
@@ -15,15 +19,5 @@ export default defineConfig({
   ],
   optimizeDeps: {
     include: ["relay-runtime", "relay-runtime/experimental", "react-relay"],
-    exclude: ["@puzzmo/tapped/src/server"],
-  },
-  build: {
-    rollupOptions: {
-      external: [/packages\/tapped\/src\/server/],
-
-      output: {
-        manualChunks: undefined,
-      },
-    },
   },
 })

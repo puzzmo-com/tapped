@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify"
 import { type RenderToPipeableStreamOptions } from "react-dom/server"
 import { RecordSource } from "relay-runtime"
 
-import { createWouterSSRContext, renderWouterReactApp } from "tapped/src/server"
+import { createWouterSSRContext, renderWouterReactApp } from "@puzzmo/tapped/src/server"
 
 import { App } from "./app/App"
 import { createWouterRoutes } from "./app/routes"
@@ -29,3 +29,6 @@ export const renderWouterApp = (context: any, options: RenderToPipeableStreamOpt
     options,
   })
 }
+
+// Powers the dev-only /_tapped route graph page; loaders never run, so the environment is never fetched from
+export const getRoutes = () => createWouterRoutes(createEnvironment("", new RecordSource()))

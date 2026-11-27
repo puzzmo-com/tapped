@@ -1,5 +1,5 @@
 import { type Environment } from "react-relay"
-import { WouterRoute } from "tapped/src/routing"
+import { WouterRoute } from "@puzzmo/tapped/src/routing"
 
 import { AnimeListPage } from "../pages/AnimeListPage"
 import { AnimeDetailPage } from "../pages/AnimeDetailPage"

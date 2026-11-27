@@ -1,5 +1,5 @@
 import { graphql, type Environment } from "react-relay"
-import { preload, useGetMainPageQuery } from "tapped/src/relay"
+import { preload, useGetMainPageQuery } from "@puzzmo/tapped/src/relay"
 
 import type { AnimeListPageQuery as AnimeListPageQueryType } from "./__generated__/AnimeListPageQuery.graphql"
 

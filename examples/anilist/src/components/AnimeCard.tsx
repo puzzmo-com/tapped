@@ -3,7 +3,7 @@ import { Link } from "wouter"
 import { AnimeListPageQuery$data } from "../queries/__generated__/AnimeListPageQuery.graphql"
 
 interface AnimeCardProps {
-  anime: AnimeListPageQuery$data["Page"]["media"][0]
+  anime: NonNullable<NonNullable<NonNullable<AnimeListPageQuery$data["Page"]>["media"]>[number]>
 }
 
 export const AnimeCard = ({ anime }: AnimeCardProps) => {
